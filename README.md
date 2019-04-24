@@ -4,8 +4,7 @@
 https://github.com/alibaba/vlayout
 
 ## 一个demo
- ![demo](https://github.com/XSation/SimpleNestList/blob/master/image/demo.jpeg)
-
+<img width="108" height="192" src="https://github.com/XSation/SimpleNestList/blob/master/image/demo.jpeg"/>
 ```java
 BrandAdapter jdService = new BrandAdapter(new TitleGridLayoutHelper(3), ShareAllTypeProvider.ADAPTER_ID_TITLE_GRID);
 jdService.setData(brandBeans);
