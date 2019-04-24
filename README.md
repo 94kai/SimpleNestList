@@ -54,6 +54,7 @@ delegateAdapter.setAdapters(absSubAdapters);
     - SingleLayoutHelper 通栏型。 即放置一个控件，横向铺满屏幕。
         - 本来不打算实现该布局，因为他其实就是一个长度的LinearLayoutHelper。后来遇到一个问题。如下：
         三列grid+四列grid组合时，当三列gird最后一行不全时，四列gird的第一个item会顶上去，此时可以给两个模块中插入一个singleLayoutHelper
+        - 参考https://github.com/XSation/SimpleNestList/blob/master/lib/src/main/java/com/xk/simplenestlist/layouthelper/SingleLayoutHelper.java
         - 所以干脆把他写出来了，使用也稍微方便了一点点。
 - 关于itemShareType
     - 类似于VLayout的mHasConsistItemType变量。
