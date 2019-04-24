@@ -23,6 +23,16 @@ public abstract class AbsSubAdapter<Data> extends RecyclerView.Adapter<BaseViewH
     private List<Data> mData;
 
     protected LayoutHelper mLayoutHelper;
+    protected DelegateAdapter mDelegateAdapter;
+
+    public AbsSubAdapter(LayoutHelper layoutHelper) {
+        this.mLayoutHelper = layoutHelper;
+    }
+
+    public void setDelegateAdapter(DelegateAdapter delegateAdapter) {
+        this.mDelegateAdapter = delegateAdapter;
+        mDelegateAdapter.setSpanCount(mLayoutHelper.getNeedSpan());
+    }
 
     @NonNull
     @Override

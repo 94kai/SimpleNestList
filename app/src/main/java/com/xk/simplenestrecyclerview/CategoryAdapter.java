@@ -17,7 +17,7 @@ import com.xk.simplenestrecyclerview.bean.CategoryBean;
 public class CategoryAdapter extends AbsSubAdapter<CategoryBean> {
 
     public CategoryAdapter(LayoutHelper layoutHelper) {
-        this.mLayoutHelper = layoutHelper;
+        super(layoutHelper);
     }
 
     @Override

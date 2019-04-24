@@ -19,6 +19,7 @@ public class GridLayoutHelper extends LayoutHelper {
 
     public GridLayoutHelper(int row) {
         this.mRow = row;
+        this.needSpan = row;
     }
 
     @Override

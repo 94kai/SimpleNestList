@@ -2,12 +2,13 @@ package com.xk.simplenestrecyclerview;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.xk.simplenestlist.AbsSubAdapter;
 import com.xk.simplenestlist.DelegateAdapter;
+import com.xk.simplenestlist.SimpleNestLayoutManager;
 import com.xk.simplenestlist.layouthelper.GridLayoutHelper;
+import com.xk.simplenestlist.layouthelper.LinearLayoutHelper;
 import com.xk.simplenestlist.layouthelper.TitleGridLayoutHelper;
 import com.xk.simplenestrecyclerview.bean.CategoryBean;
 import com.xk.simplenestrecyclerview.bean.JDServiceBean;
@@ -27,28 +28,39 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
-        final DelegateAdapter delegateAdapter = new DelegateAdapter();
+        recyclerView = findViewById(R.id.recyclerview);
 
-        // TODO: by xk 2019/4/24 下午1:16 maxSpan为所有列数的最小公倍数
-        int maxSpan = 2520;
-
-        recyclerView.setLayoutManager(new GridLayoutManager(this, maxSpan));
-
-        ((GridLayoutManager) recyclerView.getLayoutManager()).setSpanSizeLookup(delegateAdapter.getSpanSizeLookUp((GridLayoutManager) recyclerView.getLayoutManager()));
+        SimpleNestLayoutManager layoutManager = new SimpleNestLayoutManager(this);
+        final DelegateAdapter delegateAdapter = new DelegateAdapter(layoutManager);
+        recyclerView.setLayoutManager(layoutManager);
         RecyclerView.RecycledViewPool recycledViewPool = new RecyclerView.RecycledViewPool();
-        recycledViewPool.setMaxRecycledViews(0,15);
-        recycledViewPool.setMaxRecycledViews(1,15);
+        recycledViewPool.setMaxRecycledViews(0, 15);
+        recycledViewPool.setMaxRecycledViews(1, 15);
         recyclerView.setRecycledViewPool(recycledViewPool);
+
+
         List<JDServiceBean> jdServiceBeans = createDatas(JDServiceBean.class);
         List<CategoryBean> categoryBeans = createDatas(CategoryBean.class);
+
+
         JDServiceAdapter jdService = new JDServiceAdapter(new TitleGridLayoutHelper(3));
         jdService.setData(jdServiceBeans);
+
         CategoryAdapter category = new CategoryAdapter(new GridLayoutHelper(4));
         category.setData(categoryBeans);
 
+        JDServiceAdapter jdServiceList = new JDServiceAdapter(new LinearLayoutHelper());
+        jdServiceList.setData(jdServiceBeans);
+
+        JDServiceAdapter jdServiceList2 = new JDServiceAdapter(new TitleGridLayoutHelper(2));
+        jdServiceList2.setData(jdServiceBeans);
+
+
         absSubAdapters.add(jdService);
         absSubAdapters.add(category);
+        absSubAdapters.add(jdServiceList);
+        absSubAdapters.add(jdServiceList2);
+
         delegateAdapter.setAdapters(absSubAdapters);
         recyclerView.setAdapter(delegateAdapter);
     }
@@ -56,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
     private <T> List<T> createDatas(Class<T> clazz) {
         List<T> beans = new ArrayList<>();
         try {
-            for (int i = 0; i < 100; i++) {
+            for (int i = 0; i < 13; i++) {
                 beans.add(clazz.getConstructor().newInstance());
             }
         } catch (InstantiationException e) {

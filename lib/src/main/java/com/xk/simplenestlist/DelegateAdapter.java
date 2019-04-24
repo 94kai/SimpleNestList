@@ -27,6 +27,7 @@ public class DelegateAdapter extends RecyclerView.Adapter<BaseViewHolder> {
      * 仅在subAdapter内部的item之间复用
      */
     public static final int ITEM_SHARE_TYPE_SUBADAPTER = 1;
+    private final SimpleNestLayoutManager mLayoutManager;
     /**
      * item复用方式
      */
@@ -44,6 +45,11 @@ public class DelegateAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     private SparseArray<AbsSubAdapter> mItemTypeAry = new SparseArray<>();
 
     private int total;
+
+    public DelegateAdapter(SimpleNestLayoutManager layoutManager) {
+        this.mLayoutManager = layoutManager;
+        layoutManager.setSpanSizeLookup(getSpanSizeLookUp());
+    }
 
     @NonNull
     @Override
@@ -122,6 +128,7 @@ public class DelegateAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     public void setAdapters(LinkedList<AbsSubAdapter> mAdapters) {
         int startPosition = 0;
         for (AbsSubAdapter mAdapter : mAdapters) {
+            mAdapter.setDelegateAdapter(this);
             mAdapter.mStartPosition = startPosition;
             startPosition += mAdapter.getItemCount();
         }
@@ -145,8 +152,7 @@ public class DelegateAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     }
 
 
-    public GridLayoutManager.SpanSizeLookup getSpanSizeLookUp(GridLayoutManager gridLayoutManager) {
-        final int spanCount = gridLayoutManager.getSpanCount();
+    public GridLayoutManager.SpanSizeLookup getSpanSizeLookUp() {
         return new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
@@ -154,9 +160,45 @@ public class DelegateAdapter extends RecyclerView.Adapter<BaseViewHolder> {
                 if (subAdapter == null) {
                     throw new SimpleNestListException();
                 }
-                return subAdapter.getSpanByPosition(position - subAdapter.mStartPosition, spanCount);
+                return subAdapter.getSpanByPosition(position - subAdapter.mStartPosition, mLayoutManager.getSpanCount());
             }
         };
     }
+
+    /**
+     * 每增加一个layouthelper，就要刷新一下spancount
+     *
+     * @param supportSpanCount 需要支持的列数
+     */
+    public void setSpanCount(int supportSpanCount) {
+        if (mLayoutManager == null) {
+            throw new SimpleNestListException();
+        }
+        int spanCount = mLayoutManager.getSpanCount();
+        mLayoutManager.setSpanCount(leastCommonMultiple(spanCount, supportSpanCount));
+    }
+
+    /**
+     * 求最小公倍数
+     */
+    public int leastCommonMultiple(int a, int b) {
+        int c = a * b;
+        if (a < b) {
+            int r;
+            r = a;
+            a = b;
+            b = r;
+        }
+        while (true) {
+            int r = a % b;
+            if (r == 0) {
+                return c / b;
+            } else {
+                a = b;
+                b = r;
+            }
+        }
+    }
+
 }
 

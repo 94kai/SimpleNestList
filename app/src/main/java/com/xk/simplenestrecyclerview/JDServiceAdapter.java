@@ -17,7 +17,7 @@ import com.xk.simplenestrecyclerview.bean.JDServiceBean;
 public class JDServiceAdapter extends AbsSubAdapter<JDServiceBean> {
 
     public JDServiceAdapter(LayoutHelper layoutHelper) {
-        this.mLayoutHelper = layoutHelper;
+        super(layoutHelper);
     }
 
     @Override

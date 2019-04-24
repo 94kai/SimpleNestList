@@ -16,11 +16,15 @@ import com.xk.simplenestlist.SimpleNestListException;
  */
 public class LinearLayoutHelper extends LayoutHelper {
 
+    public LinearLayoutHelper() {
+        this.needSpan = 1;
+    }
+
     @Override
     public int getSpanForPosition(int position, int maxSpanCount) {
         if ((maxSpanCount<1)) {
             throw new SimpleNestListException("spanCount要大于1");
         }
-        return 1;
+        return maxSpanCount;
     }
 }
