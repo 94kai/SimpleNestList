@@ -4,14 +4,16 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 
-import com.xk.simplenestlist.AbsSubAdapter;
 import com.xk.simplenestlist.DelegateAdapter;
 import com.xk.simplenestlist.SimpleNestLayoutManager;
+import com.xk.simplenestlist.adapter.AbsSubAdapter;
+import com.xk.simplenestlist.adapter.SingleAdapter;
 import com.xk.simplenestlist.layouthelper.GridLayoutHelper;
 import com.xk.simplenestlist.layouthelper.LinearLayoutHelper;
+import com.xk.simplenestlist.layouthelper.SingleLayoutHelper;
 import com.xk.simplenestlist.layouthelper.TitleGridLayoutHelper;
+import com.xk.simplenestrecyclerview.bean.BrandBean;
 import com.xk.simplenestrecyclerview.bean.CategoryBean;
-import com.xk.simplenestrecyclerview.bean.JDServiceBean;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -31,32 +33,32 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerview);
 
         SimpleNestLayoutManager layoutManager = new SimpleNestLayoutManager(this);
-        final DelegateAdapter delegateAdapter = new DelegateAdapter(layoutManager);
+        final DelegateAdapter delegateAdapter = new DelegateAdapter(layoutManager, new ShareAllTypeProvider());
         recyclerView.setLayoutManager(layoutManager);
         RecyclerView.RecycledViewPool recycledViewPool = new RecyclerView.RecycledViewPool();
         recycledViewPool.setMaxRecycledViews(0, 15);
         recycledViewPool.setMaxRecycledViews(1, 15);
         recyclerView.setRecycledViewPool(recycledViewPool);
-
-
-        List<JDServiceBean> jdServiceBeans = createDatas(JDServiceBean.class);
+        List<BrandBean> brandBeans = createDatas(BrandBean.class);
         List<CategoryBean> categoryBeans = createDatas(CategoryBean.class);
 
 
-        JDServiceAdapter jdService = new JDServiceAdapter(new TitleGridLayoutHelper(3));
-        jdService.setData(jdServiceBeans);
+        BrandAdapter jdService = new BrandAdapter(new TitleGridLayoutHelper(3), ShareAllTypeProvider.ADAPTER_ID_TITLE_GRID);
+        jdService.setData(brandBeans);
 
-        CategoryAdapter category = new CategoryAdapter(new GridLayoutHelper(4));
+        CategoryAdapter category = new CategoryAdapter(new GridLayoutHelper(4), ShareAllTypeProvider.ADAPTER_ID_GRID);
         category.setData(categoryBeans);
 
-        JDServiceAdapter jdServiceList = new JDServiceAdapter(new LinearLayoutHelper());
-        jdServiceList.setData(jdServiceBeans);
 
-        JDServiceAdapter jdServiceList2 = new JDServiceAdapter(new TitleGridLayoutHelper(2));
-        jdServiceList2.setData(jdServiceBeans);
+        BrandAdapter jdServiceList = new BrandAdapter(new LinearLayoutHelper(), ShareAllTypeProvider.ADAPTER_ID_LIST);
+        jdServiceList.setData(brandBeans);
+
+        BrandAdapter jdServiceList2 = new BrandAdapter(new TitleGridLayoutHelper(2), ShareAllTypeProvider.ADAPTER_ID_TITLE_GRID);
+        jdServiceList2.setData(brandBeans);
 
 
         absSubAdapters.add(jdService);
+        absSubAdapters.add(new SingleAdapter(new SingleLayoutHelper(), ShareAllTypeProvider.ADAPTER_ID_SINGLE_DIVIDER));
         absSubAdapters.add(category);
         absSubAdapters.add(jdServiceList);
         absSubAdapters.add(jdServiceList2);
@@ -68,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
     private <T> List<T> createDatas(Class<T> clazz) {
         List<T> beans = new ArrayList<>();
         try {
-            for (int i = 0; i < 13; i++) {
+            for (int i = 0; i < 12; i++) {
                 beans.add(clazz.getConstructor().newInstance());
             }
         } catch (InstantiationException e) {

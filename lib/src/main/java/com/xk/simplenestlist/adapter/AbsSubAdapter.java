@@ -1,11 +1,13 @@
-package com.xk.simplenestlist;
+package com.xk.simplenestlist.adapter;
 
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.ViewGroup;
 
+import com.xk.simplenestlist.BaseViewHolder;
+import com.xk.simplenestlist.DelegateAdapter;
+import com.xk.simplenestlist.IShareAllTypeProvider;
 import com.xk.simplenestlist.layouthelper.LayoutHelper;
 
 import java.util.List;
@@ -21,12 +23,14 @@ public abstract class AbsSubAdapter<Data> extends RecyclerView.Adapter<BaseViewH
     public int mStartPosition;
 
     private List<Data> mData;
+    private int mAdapterId;
 
     protected LayoutHelper mLayoutHelper;
     protected DelegateAdapter mDelegateAdapter;
 
-    public AbsSubAdapter(LayoutHelper layoutHelper) {
+    public AbsSubAdapter(LayoutHelper layoutHelper, int adapterId) {
         this.mLayoutHelper = layoutHelper;
+        this.mAdapterId = adapterId;
     }
 
     public void setDelegateAdapter(DelegateAdapter delegateAdapter) {
@@ -37,32 +41,18 @@ public abstract class AbsSubAdapter<Data> extends RecyclerView.Adapter<BaseViewH
     @NonNull
     @Override
     public final BaseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        boolean shareTypeAll = true;
-        Log.i("AbsSubAdapter", "onCreateViewHolder-->" + viewType + " " + getClass().getSimpleName());
-        if (shareTypeAll) {
-            return onCreateViewHolderForAll(parent, viewType);
+        if (mDelegateAdapter.itemShareType == DelegateAdapter.ITEM_SHARE_TYPE_ALL) {
+            IShareAllTypeProvider shareAllTypeProvider = mDelegateAdapter.getShareAllTypeProvider();
+            return shareAllTypeProvider.onCreateViewHolder(parent, viewType);
         } else {
             return onCreateViewHolderForSubAdapter(parent, viewType);
         }
     }
 
     /**
-     * 不同subAdapter，这个实现要一致。
-     *
-     * @param viewGroup
-     * @param viewType
-     * @return
+     * ITEM_SHARE_TYPE_SUBADAPTER模式下重写该方法创建viewholder
      */
-    public abstract BaseViewHolder onCreateViewHolderForAll(@NonNull ViewGroup viewGroup, int viewType);
-
-    /**
-     * 由于viewType在SubAdapter内部复用，所以不同的subAdapter可以重写他，可以具有不同的实现
-     *
-     * @param viewGroup
-     * @param viewType
-     * @return
-     */
-    private final BaseViewHolder onCreateViewHolderForSubAdapter(@NonNull ViewGroup viewGroup, int viewType) {
+    protected BaseViewHolder onCreateViewHolderForSubAdapter(@NonNull ViewGroup parent, int viewType) {
         return null;
     }
 
@@ -81,5 +71,22 @@ public abstract class AbsSubAdapter<Data> extends RecyclerView.Adapter<BaseViewH
 
     public int getSpanByPosition(int position, int maxSpanCount) {
         return mLayoutHelper.getSpanForPosition(position, maxSpanCount);
+    }
+
+    @Override
+    public final int getItemViewType(int position) {
+        if (mDelegateAdapter.itemShareType == DelegateAdapter.ITEM_SHARE_TYPE_ALL) {
+            IShareAllTypeProvider itemTypeProvider = mDelegateAdapter.getShareAllTypeProvider();
+            return itemTypeProvider.getItemViewType(position, mAdapterId);
+        } else {
+            return getItemViewTypeForSubAdapter(position);
+        }
+    }
+
+    /**
+     * ITEM_SHARE_TYPE_SUBADAPTER模式下重写该方法，为每个item指定viewtype
+     */
+    protected int getItemViewTypeForSubAdapter(int position) {
+        return 0;
     }
 }

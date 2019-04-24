@@ -6,6 +6,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.ViewGroup;
 
+import com.xk.simplenestlist.adapter.AbsSubAdapter;
+
 import java.util.LinkedList;
 
 /**
@@ -31,7 +33,7 @@ public class DelegateAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     /**
      * item复用方式
      */
-    private int itemShareType = ITEM_SHARE_TYPE_ALL;
+    public int itemShareType = ITEM_SHARE_TYPE_ALL;
 
     /**
      * subadapter的集合
@@ -45,10 +47,23 @@ public class DelegateAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     private SparseArray<AbsSubAdapter> mItemTypeAry = new SparseArray<>();
 
     private int total;
+    private IShareAllTypeProvider shareAllTypeProvider;
 
-    public DelegateAdapter(SimpleNestLayoutManager layoutManager) {
+
+    /**
+     * 构造
+     * @param layoutManager
+     * @param itemViewTypeProvider
+     */
+    public DelegateAdapter(SimpleNestLayoutManager layoutManager, IShareAllTypeProvider itemViewTypeProvider) {
         this.mLayoutManager = layoutManager;
+        this.shareAllTypeProvider = itemViewTypeProvider;
         layoutManager.setSpanSizeLookup(getSpanSizeLookUp());
+        if (itemShareType == ITEM_SHARE_TYPE_ALL) {
+            if (this.shareAllTypeProvider == null) {
+                throw new SimpleNestListException("ITEM_SHARE_TYPE_ALL模式必须指定itemViewTypeProvider");
+            }
+        }
     }
 
     @NonNull
@@ -200,5 +215,8 @@ public class DelegateAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         }
     }
 
+    public IShareAllTypeProvider getShareAllTypeProvider() {
+        return shareAllTypeProvider;
+    }
 }
 

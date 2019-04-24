@@ -21,15 +21,4 @@ public class SimpleNestLayoutManager extends GridLayoutManager {
         super(context, spanCount, orientation, reverseLayout);
     }
 
-    /**
-     * 构造
-     * @param context
-     * @param supportRow 需要支持的列数，比如整个recyclerview中某个模块需要2列，某个3列，某个4列，就输入2，3，4
-     */
-//    public SimpleNestLayoutManager(Context context, int... supportRow) {
-//        // TODO: by xk 2019/4/24 下午1:16 maxSpan为所有列数的最小公倍数
-//        super(context, maxSpan);
-//    }
-
-
 }
