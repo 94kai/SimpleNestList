@@ -4,7 +4,7 @@
 https://github.com/alibaba/vlayout
 
 ## 一个demo
-<img width="108" height="192" src="https://github.com/XSation/SimpleNestList/blob/master/image/demo.jpeg"/>
+<img width="300" height="900" src="https://github.com/XSation/SimpleNestList/blob/master/image/demo.jpeg"/>
 ```java
 BrandAdapter jdService = new BrandAdapter(new TitleGridLayoutHelper(3), ShareAllTypeProvider.ADAPTER_ID_TITLE_GRID);
 jdService.setData(brandBeans);
@@ -31,14 +31,11 @@ delegateAdapter.setAdapters(absSubAdapters);
 
 ## 什么地方需要用到该框架（当然用VLayout是首选，不过重复造轮子也没什么不好，重要的是学习知识点 ^_^...）
 
- ![淘宝首页](https://github.com/XSation/SimpleNestList/blob/master/image/taobaohome.jpeg)
- ![淘宝筛选面板](https://github.com/XSation/SimpleNestList/blob/master/image/taobaofilter.jpeg)
- ![京东首页](https://github.com/XSation/SimpleNestList/blob/master/image/jdhome.jpeg)
- ![京东筛选面板](https://github.com/XSation/SimpleNestList/blob/master/image/jdfilter.jpeg)
- ![京东分类](https://github.com/XSation/SimpleNestList/blob/master/image/jdcategory.jpeg)
-
-
-
+<img width="300" height="600" src="https://github.com/XSation/SimpleNestList/blob/master/image/taobaohome.jpeg"/>
+<img width="300" height="600" src="https://github.com/XSation/SimpleNestList/blob/master/image/taobaofilter.jpeg"/>
+<img width="300" height="600" src="https://github.com/XSation/SimpleNestList/blob/master/image/jdhome.jpeg"/>
+<img width="300" height="600" src="https://github.com/XSation/SimpleNestList/blob/master/image/jdfilter.jpeg"/>
+<img width="300" height="600" src="https://github.com/XSation/SimpleNestList/blob/master/image/jdcategory.jpeg"/>
 
 ##
 - 对外暴露的api模仿VLayout实现，简化了开发步骤。
