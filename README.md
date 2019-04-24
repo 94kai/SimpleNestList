@@ -4,7 +4,7 @@
 https://github.com/alibaba/vlayout
 
 ## 一个demo
- ![demo](https://github.com/kaikaixue/)
+ ![demo](https://github.com/XSation/SimpleNestList/blob/master/image/demo.jpeg)
 
 ```java
 BrandAdapter jdService = new BrandAdapter(new TitleGridLayoutHelper(3), ShareAllTypeProvider.ADAPTER_ID_TITLE_GRID);
@@ -32,11 +32,11 @@ delegateAdapter.setAdapters(absSubAdapters);
 
 ## 什么地方需要用到该框架（当然用VLayout是首选，不过重复造轮子也没什么不好，重要的是学习知识点 ^_^...）
 
- ![淘宝首页](https://github.com/kaikaixue/)
- ![淘宝筛选面板](https://github.com/kaikaixue/)
- ![京东首页](https://github.com/kaikaixue/)
- ![京东筛选面板](https://github.com/kaikaixue/)
- ![京东分类](https://github.com/kaikaixue/)
+ ![淘宝首页](https://github.com/XSation/SimpleNestList/blob/master/image/taobaohome.jpeg)
+ ![淘宝筛选面板](https://github.com/XSation/SimpleNestList/blob/master/image/taobaofilter.jpeg)
+ ![京东首页](https://github.com/XSation/SimpleNestList/blob/master/image/jdhome.jpeg)
+ ![京东筛选面板](https://github.com/XSation/SimpleNestList/blob/master/image/jdfilter.jpeg)
+ ![京东分类](https://github.com/XSation/SimpleNestList/blob/master/image/jdcategory.jpeg)
 
 
 
