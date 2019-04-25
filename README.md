@@ -8,21 +8,25 @@ https://github.com/alibaba/vlayout
 > 以下只是暂时已经实现的几个布局，他们支持任意组合，搭配。相同类型的view之间支持互相复用。更重要的是扩展出新的布局也很简单，可以直接参考已经实现的效果去做。
 
 列表
- ![demo](https://github.com/XSation/SimpleNestList/blob/master/image/list.jpeg)
+
+ ![列表](https://github.com/XSation/SimpleNestList/blob/master/image/list.png)
 
 网格
- ![demo](https://github.com/XSation/SimpleNestList/blob/master/image/grid.jpeg)
+
+ ![网格](https://github.com/XSation/SimpleNestList/blob/master/image/grid.png)
 
 带title的网格
- ![demo](https://github.com/XSation/SimpleNestList/blob/master/image/titlegrid.jpeg)
+
+ ![带title的网格](https://github.com/XSation/SimpleNestList/blob/master/image/titlegrid.png)
 
 
 横跨view的独立控件
 
- ![demo](https://github.com/XSation/SimpleNestList/blob/master/image/single.jpeg)
+ ![横跨view的独立控件](https://github.com/XSation/SimpleNestList/blob/master/image/single.png)
 
 交错的网格（一个示例，具体可以根据自己产品需求自定义）
- ![demo](https://github.com/XSation/SimpleNestList/blob/master/image/crossgridlayout.jpeg)
+
+ ![交错的网格](https://github.com/XSation/SimpleNestList/blob/master/image/crossgridlayout.png)
 
 搭配起来的效果
 
@@ -37,8 +41,9 @@ https://github.com/alibaba/vlayout
 ![京东筛选面板](https://github.com/XSation/SimpleNestList/blob/master/image/jdfilter.jpeg)
 ![京东分类](https://github.com/XSation/SimpleNestList/blob/master/image/jdcategory.jpeg)
 
-##
-- 对外暴露的api模仿VLayout实现，简化了开发步骤。
+## 优缺点
+- 对外暴露的api模仿VLayout实现，使用方式与VLayout一样简单。简化了开发步骤。
+- 相同类型的view之间支持互相复用。
 - 对于布局的实现，使用gridLayoutManager控制span实现。
     - 相较于VLayout：
         - 实现方式更low ^_^
