@@ -67,7 +67,42 @@ https://github.com/alibaba/vlayout
         - 用getItemViewTypeForSubAdapter和onCreateViewHolderForSubAdapter方法来代替原生方法
         - 目前暂未实现这种模式。
 
+## 数据操作、ui刷新
+
+目前支持：
+- 整个recyclerView一次性刷。简单粗暴。
+- 针对一个subAdapter刷。由于subAdapter的模块化开发。所以也很简单。同时效率也更好。
+- 不要使用Adapter官方提供的方法!!!不要使用Adapter官方提供的方法!!!不要使用Adapter官方提供的方法!!!
+
+### 如下：
+
+- 简单粗暴法。刷整个recyclerview
+    - 修改任意一个subAdapter的数据源之后，可以调用delegateAdapter.simpleNotifyDataSetChanged来刷新，注意不是系统提供的notifyDataSetChanged方法
+        - delegateAdapter.simpleNotifyDataSetChanged();
+- 略微粗暴法。
+    - 刷一个subAdapter的小区域，目前只想到这种方法，并且必须要传入新旧数据源，没有好的思路保存这两数据源。大家有其他思路的可以提一提。
+    - 使用默认的DiffCallback，即认为调用该方法，先移除，后新增，效率略低
+        - categoryAdapter.simpleNotifyDataSetChanged(oldDatas, categoryBeans);
+    - 使用自定义的DiffCallback，会根据数据源的变化情况来刷，效率略高
+        - categoryAdapter.simpleNotifyDataSetChanged(oldDatas, categoryBeans,new DefaultDiffCallback<CategoryBean>(){// TODO: by xk 2019/4/25 下午3:56 实现各种自己的实现});
+- itemChanged
+    - categoryAdapter.simpleNotifyItemChanged(1);
+- itemRemove
+    - categoryAdapter.simpleNotifyItemRemoved(0);
+- itemMove
+    - categoryAdapter.simpleNotifyItemMoved(2, 10);
+- itemInserted
+    - categoryAdapter.simpleNotifyItemInserted(4);
+- itemRangeChanged
+    - categoryAdapter.simpleNotifyItemRangeChanged(1,4);
+- itemRangeRemoved
+    - categoryAdapter.simpleNotifyItemRangeRemoved(1,4);
+- itemRangeInserted
+    - categoryAdapter.simpleNotifyItemRangeInserted(1,4);
+
+
 # TODO
 - 可以利用ItemDecoration实现类似阿里的fix类型的布局。开发者同样使用adapter的形式使用，delegateadapter中把这种helper的subadapter过滤掉，单独处理。
 - 吸顶效果
 - 支持ITEM_SHARE_TYPE_SUBADAPTER
+- 针对subAdapter刷所有数据时，不需要传入新旧数据源（没有想到较好的办法去保存修改前后数据源）

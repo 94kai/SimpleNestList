@@ -45,13 +45,16 @@ public class DelegateAdapter extends RecyclerView.Adapter<BaseViewHolder> {
      * 每个subAdapter的onCreateViewHolder的行为一致，所以可以通过viewType来决定如果CreateViewHolder
      */
     private SparseArray<AbsSubAdapter> mItemTypeAry = new SparseArray<>();
-
+    /**
+     * itemCount
+     */
     private int total;
     private IShareAllTypeProvider shareAllTypeProvider;
 
 
     /**
      * 构造
+     *
      * @param layoutManager
      * @param itemViewTypeProvider
      */
@@ -139,33 +142,46 @@ public class DelegateAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         return result;
     }
 
-
+    /**
+     * 设置adapters
+     *
+     * @param mAdapters
+     */
     public void setAdapters(LinkedList<AbsSubAdapter> mAdapters) {
+        this.mAdapters = mAdapters;
+        simpleNotifyDataSetChanged();
+    }
+
+    /**
+     * 清空状态
+     */
+    private void clear() {
+        total = 0;
+    }
+
+    // TODO: by xk 2019/4/24 上午10:36 任意一个adapter的itemCount改变，都需要更新total
+
+    /**
+     * 任意一个subAdapter的数据源改变，都可以通过调用该方法来刷新。类似于notifyDataSetChanged
+     */
+    public void simpleNotifyDataSetChanged() {
+        updateIndex();
+        notifyDataSetChanged();
+        // TODO: by xk 2019/4/24 上午10:39 更新position和subadapter的索引
+    }
+
+    public void updateIndex(){
+        clear();
         int startPosition = 0;
         for (AbsSubAdapter mAdapter : mAdapters) {
             mAdapter.setDelegateAdapter(this);
             mAdapter.mStartPosition = startPosition;
             startPosition += mAdapter.getItemCount();
         }
-        this.mAdapters = mAdapters;
-        clear();
-        update();
-        notifyDataSetChanged();
-    }
-
-    private void clear() {
-        total = 0;
-    }
-
-    // TODO: by xk 2019/4/24 上午10:36 任意一个adapter的itemCount改变，都需要更新total
-    private void update() {
-        total = 0;
         for (AbsSubAdapter adapter : mAdapters) {
             total += adapter.getItemCount();
         }
-        // TODO: by xk 2019/4/24 上午10:39 更新position和subadapter的索引
     }
-
 
     public GridLayoutManager.SpanSizeLookup getSpanSizeLookUp() {
         return new GridLayoutManager.SpanSizeLookup() {
@@ -173,7 +189,7 @@ public class DelegateAdapter extends RecyclerView.Adapter<BaseViewHolder> {
             public int getSpanSize(int position) {
                 AbsSubAdapter subAdapter = findSubAdapterByPosition(position);
                 if (subAdapter == null) {
-                    throw new SimpleNestListException();
+                    throw new SimpleNestListException(position + "的adapter没找到");
                 }
                 return subAdapter.getSpanByPosition(position - subAdapter.mStartPosition, mLayoutManager.getSpanCount());
             }
@@ -194,7 +210,7 @@ public class DelegateAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         for (int i : supportSpanCount) {
             spanCountTemp = leastCommonMultiple(spanCountTemp, i);
         }
-        if (spanCount!=spanCountTemp) {
+        if (spanCount != spanCountTemp) {
             mLayoutManager.setSpanCount(spanCountTemp);
         }
     }

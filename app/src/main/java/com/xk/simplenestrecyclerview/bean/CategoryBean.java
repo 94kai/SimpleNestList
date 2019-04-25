@@ -5,7 +5,7 @@ package com.xk.simplenestrecyclerview.bean;
  * @date 2019/4/24
  */
 public class CategoryBean {
-    public String name;
+    public String name = "";
 
     public CategoryBean(String name) {
         this.name = name;
