@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         BrandAdapter serviceList2 = new BrandAdapter(new TitleGridLayoutHelper(2), ShareAllTypeProvider.ADAPTER_ID_TITLE_GRID);
         serviceList2.setData(brandBeans);
 
-
+recyclerView.addItemDecoration();
         absSubAdapters.add(service);
         absSubAdapters.add(new SingleAdapter(new SingleLayoutHelper(), ShareAllTypeProvider.ADAPTER_ID_SINGLE_DIVIDER));
         absSubAdapters.add(category);

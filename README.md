@@ -62,3 +62,7 @@ https://github.com/alibaba/vlayout
         - 用getItemViewTypeForSubAdapter和onCreateViewHolderForSubAdapter方法来代替原生方法
         - 目前暂未实现这种模式。
 
+# TODO
+- 可以利用ItemDecoration实现类似阿里的fix类型的布局。开发者同样使用adapter的形式使用，delegateadapter中把这种helper的subadapter过滤掉，单独处理。
+- 吸顶效果
+- 支持ITEM_SHARE_TYPE_SUBADAPTER
