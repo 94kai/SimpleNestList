@@ -185,12 +185,18 @@ public class DelegateAdapter extends RecyclerView.Adapter<BaseViewHolder> {
      *
      * @param supportSpanCount 需要支持的列数
      */
-    public void setSpanCount(int supportSpanCount) {
+    public void setSpanCount(int[] supportSpanCount) {
         if (mLayoutManager == null) {
             throw new SimpleNestListException();
         }
         int spanCount = mLayoutManager.getSpanCount();
-        mLayoutManager.setSpanCount(leastCommonMultiple(spanCount, supportSpanCount));
+        int spanCountTemp = spanCount;
+        for (int i : supportSpanCount) {
+            spanCountTemp = leastCommonMultiple(spanCountTemp, i);
+        }
+        if (spanCount!=spanCountTemp) {
+            mLayoutManager.setSpanCount(spanCountTemp);
+        }
     }
 
     /**

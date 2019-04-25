@@ -17,7 +17,7 @@ import com.xk.simplenestlist.SimpleNestListException;
 public class LinearLayoutHelper extends LayoutHelper {
 
     public LinearLayoutHelper() {
-        this.needSpan = 1;
+        this.needSpan = new int[]{1};
     }
 
     @Override

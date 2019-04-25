@@ -1,5 +1,6 @@
 package com.xk.simplenestrecyclerview;
 
+import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -49,9 +50,11 @@ public class ShareAllTypeProvider implements IShareAllTypeProvider {
             case VIEW_TYPE_DIVIDER:
                 itemView = new TextView(parent.getContext());
                 ((TextView) itemView).setText("我是一条分割线，你可以把我高度设为0.");
+                itemView.setBackgroundColor(Color.RED);
                 break;
             case VIEW_TYPE_TITLE:
                 itemView = new TextView(parent.getContext());
+                itemView.setBackgroundColor(Color.BLUE);
                 break;
             case VIEW_TYPE_BUTTON:
                 itemView = new Button(parent.getContext());

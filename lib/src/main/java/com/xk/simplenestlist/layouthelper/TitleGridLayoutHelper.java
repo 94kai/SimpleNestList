@@ -19,7 +19,7 @@ public class TitleGridLayoutHelper extends LayoutHelper {
 
     public TitleGridLayoutHelper(int column) {
         this.mColumn = column;
-        this.needSpan = column;
+        this.needSpan = new int[]{column};
     }
 
     @Override

@@ -8,6 +8,7 @@ import com.xk.simplenestlist.DelegateAdapter;
 import com.xk.simplenestlist.SimpleNestLayoutManager;
 import com.xk.simplenestlist.adapter.AbsSubAdapter;
 import com.xk.simplenestlist.adapter.SingleAdapter;
+import com.xk.simplenestlist.layouthelper.CrossGridLayoutHelper;
 import com.xk.simplenestlist.layouthelper.GridLayoutHelper;
 import com.xk.simplenestlist.layouthelper.LinearLayoutHelper;
 import com.xk.simplenestlist.layouthelper.SingleLayoutHelper;
@@ -43,34 +44,41 @@ public class MainActivity extends AppCompatActivity {
         List<CategoryBean> categoryBeans = createDatas(CategoryBean.class);
 
 
-        BrandAdapter jdService = new BrandAdapter(new TitleGridLayoutHelper(3), ShareAllTypeProvider.ADAPTER_ID_TITLE_GRID);
-        jdService.setData(brandBeans);
+        BrandAdapter service = new BrandAdapter(new TitleGridLayoutHelper(3), ShareAllTypeProvider.ADAPTER_ID_TITLE_GRID);
+        service.setData(brandBeans);
 
         CategoryAdapter category = new CategoryAdapter(new GridLayoutHelper(4), ShareAllTypeProvider.ADAPTER_ID_GRID);
         category.setData(categoryBeans);
 
 
-        BrandAdapter jdServiceList = new BrandAdapter(new LinearLayoutHelper(), ShareAllTypeProvider.ADAPTER_ID_LIST);
-        jdServiceList.setData(brandBeans);
+        BrandAdapter serviceList = new BrandAdapter(new LinearLayoutHelper(), ShareAllTypeProvider.ADAPTER_ID_LIST);
+        serviceList.setData(brandBeans);
 
-        BrandAdapter jdServiceList2 = new BrandAdapter(new TitleGridLayoutHelper(2), ShareAllTypeProvider.ADAPTER_ID_TITLE_GRID);
-        jdServiceList2.setData(brandBeans);
+        BrandAdapter serviceList2 = new BrandAdapter(new TitleGridLayoutHelper(2), ShareAllTypeProvider.ADAPTER_ID_TITLE_GRID);
+        serviceList2.setData(brandBeans);
 
 
-        absSubAdapters.add(jdService);
+        absSubAdapters.add(service);
         absSubAdapters.add(new SingleAdapter(new SingleLayoutHelper(), ShareAllTypeProvider.ADAPTER_ID_SINGLE_DIVIDER));
         absSubAdapters.add(category);
-        absSubAdapters.add(jdServiceList);
-        absSubAdapters.add(jdServiceList2);
+        absSubAdapters.add(serviceList);
+        absSubAdapters.add(serviceList2);
+        absSubAdapters.add(new SingleAdapter(new SingleLayoutHelper(), ShareAllTypeProvider.ADAPTER_ID_SINGLE_DIVIDER));
+
+        BrandAdapter brandAdapter = new BrandAdapter(new CrossGridLayoutHelper(), ShareAllTypeProvider.ADAPTER_ID_GRID);
+        brandAdapter.setData(createDatas(BrandBean.class,25));
+        absSubAdapters.add(brandAdapter);
 
         delegateAdapter.setAdapters(absSubAdapters);
         recyclerView.setAdapter(delegateAdapter);
     }
 
-    private <T> List<T> createDatas(Class<T> clazz) {
+
+
+    private <T> List<T> createDatas(Class<T> clazz, int count) {
         List<T> beans = new ArrayList<>();
         try {
-            for (int i = 0; i < 12; i++) {
+            for (int i = 0; i < count; i++) {
                 beans.add(clazz.getConstructor().newInstance());
             }
         } catch (InstantiationException e) {
@@ -84,5 +92,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return beans;
+    }
+    private <T> List<T> createDatas(Class<T> clazz) {
+        return createDatas(clazz,12);
     }
 }

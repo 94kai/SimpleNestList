@@ -19,7 +19,7 @@ public class GridLayoutHelper extends LayoutHelper {
 
     public GridLayoutHelper(int column) {
         this.mColumn = column;
-        this.needSpan = column;
+        this.needSpan = new int[]{column};
     }
 
     @Override

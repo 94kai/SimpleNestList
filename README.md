@@ -3,31 +3,31 @@
 # 鸣谢 ^_^
 https://github.com/alibaba/vlayout
 
-## 一个demo
+## 已实现的效果图
+
+> 以下只是暂时已经实现的几个布局，他们支持任意组合，搭配。相同类型的view之间支持互相复用。更重要的是扩展出新的布局也很简单，可以直接参考已经实现的效果去做。
+
+列表
+ ![demo](https://github.com/XSation/SimpleNestList/blob/master/image/list.jpeg)
+
+网格
+ ![demo](https://github.com/XSation/SimpleNestList/blob/master/image/grid.jpeg)
+
+带title的网格
+ ![demo](https://github.com/XSation/SimpleNestList/blob/master/image/titlegrid.jpeg)
+
+
+横跨view的独立控件
+
+ ![demo](https://github.com/XSation/SimpleNestList/blob/master/image/single.jpeg)
+
+交错的网格（一个示例，具体可以根据自己产品需求自定义）
+ ![demo](https://github.com/XSation/SimpleNestList/blob/master/image/crossgridlayout.jpeg)
+
+搭配起来的效果
+
  ![demo](https://github.com/XSation/SimpleNestList/blob/master/image/demo.jpeg)
-```java
-BrandAdapter jdService = new BrandAdapter(new TitleGridLayoutHelper(3), ShareAllTypeProvider.ADAPTER_ID_TITLE_GRID);
-jdService.setData(brandBeans);
 
-CategoryAdapter category = new CategoryAdapter(new GridLayoutHelper(4), ShareAllTypeProvider.ADAPTER_ID_GRID);
-category.setData(categoryBeans);
-
-
-BrandAdapter jdServiceList = new BrandAdapter(new LinearLayoutHelper(), ShareAllTypeProvider.ADAPTER_ID_LIST);
-jdServiceList.setData(brandBeans);
-
-BrandAdapter jdServiceList2 = new BrandAdapter(new TitleGridLayoutHelper(2), ShareAllTypeProvider.ADAPTER_ID_TITLE_GRID);
-jdServiceList2.setData(brandBeans);
-
-
-absSubAdapters.add(jdService);
-absSubAdapters.add(new SingleAdapter(new SingleLayoutHelper(), ShareAllTypeProvider.ADAPTER_ID_SINGLE_DIVIDER));
-absSubAdapters.add(category);
-absSubAdapters.add(jdServiceList);
-absSubAdapters.add(jdServiceList2);
-
-delegateAdapter.setAdapters(absSubAdapters);
-```
 
 ## 什么地方需要用到该框架（当然用VLayout是首选，不过重复造轮子也没什么不好，重要的是学习知识点 ^_^...）
 
@@ -42,6 +42,7 @@ delegateAdapter.setAdapters(absSubAdapters);
 - 对于布局的实现，使用gridLayoutManager控制span实现。
     - 相较于VLayout：
         - 实现方式更low ^_^
+        - 不支持流式布局
         - 但也有好处：扩展容易，只需要继承LayoutHelper，实现几个方法即可，具体可参考layouthelper包下的几个类。
 - 目前已经实现的Layout：
     - LinearLayoutHelper 线性的，即类似于listView那样
@@ -52,6 +53,7 @@ delegateAdapter.setAdapters(absSubAdapters);
         三列grid+四列grid组合时，当三列gird最后一行不全时，四列gird的第一个item会顶上去，此时可以给两个模块中插入一个singleLayoutHelper
         - 参考https://github.com/XSation/SimpleNestList/blob/master/lib/src/main/java/com/xk/simplenestlist/layouthelper/SingleLayoutHelper.java
         - 所以干脆把他写出来了，使用也稍微方便了一点点。
+    - 等等，具体以上面效果图为准
 - 关于itemShareType
     - 类似于VLayout的mHasConsistItemType变量。
     - 如果为ITEM_SHARE_TYPE_ALL类型，表示整个recyclerview中，所有的item，只要type相同，就可以彼此复用。然而这样也会引入一个问题，不同的子adapter，不好把控viewtype，可能出现两个子adapter中定义了相同的viewtype，但是他们的样式并不相同，这样就会出现显示的bug
