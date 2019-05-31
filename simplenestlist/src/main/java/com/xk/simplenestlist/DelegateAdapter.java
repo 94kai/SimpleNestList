@@ -29,8 +29,6 @@ public class DelegateAdapter extends RecyclerView.Adapter<BaseViewHolder> {
      * itemCount
      */
     private int total;
-    private RecyclerView.RecycledViewPool pool;
-
 
     /**
      * 构造
@@ -92,8 +90,6 @@ public class DelegateAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     private int makeViewType(AbsSubAdapter absSubAdapter, int position) {
         int subItemType = absSubAdapter.getItemViewType(position - absSubAdapter.mStartPosition);
         long cantor = Cantor.getCantor(subItemType, absSubAdapter.getIndex());
-        //test
-        pool.setMaxRecycledViews((int) cantor,40);
         return (int) cantor;
     }
 
@@ -222,10 +218,6 @@ public class DelegateAdapter extends RecyclerView.Adapter<BaseViewHolder> {
                 b = r;
             }
         }
-    }
-
-    public void setPool(RecyclerView.RecycledViewPool recycledViewPool) {
-        this.pool = recycledViewPool;
     }
 }
 

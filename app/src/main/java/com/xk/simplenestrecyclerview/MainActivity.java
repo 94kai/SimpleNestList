@@ -32,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
     private List<CategoryBean> categoryBeans;
     private DelegateAdapter delegateAdapter;
     private BrandAdapter brandAdapter;
-    RecyclerView.Adapter finalAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,50 +46,11 @@ public class MainActivity extends AppCompatActivity {
                 help();
             }
         });
-//        final RecyclerView.Adapter adapter;
-//
-//        adapter = new RecyclerView.Adapter() {
-//            @NonNull
-//            @Override
-//            public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-//                Button textView = new Button(viewGroup.getContext());
-//                textView.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        recyclerView.setAdapter(null);
-//                        recyclerView.setAdapter(finalAdapter);
-//                    }
-//                });
-//                Log.i("MainActivity", "onCreateViewHolder-->");
-//                return new RecyclerView.ViewHolder(textView) {
-//                    @Override
-//                    public String toString() {
-//                        return super.toString();
-//                    }
-//                };
-//            }
-//
-//            @Override
-//            public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-//                Log.i("MainActivity", "onBindViewHolder-->");
-//            }
-//
-//            @Override
-//            public int getItemCount() {
-//                return 100;
-//            }
-//        };
-//        finalAdapter = adapter;
-//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-//        recyclerView.setAdapter(adapter);
-
 
         SimpleNestLayoutManager layoutManager = new SimpleNestLayoutManager(this);
         delegateAdapter = new DelegateAdapter(layoutManager);
         recyclerView.setLayoutManager(layoutManager);
         RecyclerView.RecycledViewPool recycledViewPool = new RecyclerView.RecycledViewPool();
-        recycledViewPool.setMaxRecycledViews(0, 15);
-        recycledViewPool.setMaxRecycledViews(1, 15);
         recyclerView.setRecycledViewPool(recycledViewPool);
         List<BrandBean> brandBeans = createDatas(BrandBean.class);
         categoryBeans = createDatas(CategoryBean.class);
@@ -98,12 +58,11 @@ public class MainActivity extends AppCompatActivity {
 
         BrandAdapter service = new BrandAdapter(new TitleGridLayoutHelper(3));
         service.setData(brandBeans);
-
         categoryAdapter = new CategoryAdapter(new GridLayoutHelper(4));
         categoryAdapter.setData(categoryBeans);
 
 
-        BrandAdapter serviceList = new BrandAdapter(new LinearLayoutHelper());
+        BrandAdapter serviceList = new BrandAdapter(new LinearLayoutHelper(), recycledViewPool);
         serviceList.setData(brandBeans);
 
         BrandAdapter serviceList2 = new BrandAdapter(new TitleGridLayoutHelper(2));
@@ -120,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
         brandAdapter.setData(createDatas(BrandBean.class, 25));
         absSubAdapters.add(brandAdapter);
         delegateAdapter.setAdapters(absSubAdapters);
-        delegateAdapter.setPool(recycledViewPool);
         recyclerView.setAdapter(delegateAdapter);
     }
 

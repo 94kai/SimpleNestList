@@ -1,4 +1,4 @@
-package com.xk.lib;
+package com.xk.simplenestlist;
 
 import org.junit.Test;
 

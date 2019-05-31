@@ -1,6 +1,7 @@
 package com.xk.simplenestrecyclerview;
 
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -22,6 +23,15 @@ public class BrandAdapter extends AbsSubAdapter<BrandBean> {
         super(layoutHelper);
     }
 
+    public BrandAdapter(LayoutHelper layoutHelper, RecyclerView.RecycledViewPool pool) {
+        super(layoutHelper,pool);
+        //设置回收池大小
+//        pool.setMaxRecycledViews(1,10);
+//        pool.setMaxRecycledViews(1,10);
+//        pool.setMaxRecycledViews(1,10);
+//        pool.setMaxRecycledViews(1,10);
+//        pool.setMaxRecycledViews(1,10);
+    }
     @NonNull
     @Override
     public BaseViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {

@@ -7,9 +7,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
 import com.xk.simplenestlist.BaseViewHolder;
+import com.xk.simplenestlist.Cantor;
 import com.xk.simplenestlist.DelegateAdapter;
 import com.xk.simplenestlist.layouthelper.LayoutHelper;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -17,6 +19,7 @@ import java.util.List;
  * @date 2019/4/24
  */
 public abstract class AbsSubAdapter<Data> extends RecyclerView.Adapter<BaseViewHolder> {
+    private RecyclerView.RecycledViewPool pool;
     /**
      * 子adapter第一个元素在整个recyclerview中的起始position
      */
@@ -24,7 +27,7 @@ public abstract class AbsSubAdapter<Data> extends RecyclerView.Adapter<BaseViewH
 
     protected List<Data> mData;
     //位于adapter的集合第几位
-    private int index;
+    private int index = -1;
 
     protected LayoutHelper mLayoutHelper;
     protected DelegateAdapter mDelegateAdapter;
@@ -37,6 +40,11 @@ public abstract class AbsSubAdapter<Data> extends RecyclerView.Adapter<BaseViewH
 
     public AbsSubAdapter(LayoutHelper layoutHelper) {
         this.mLayoutHelper = layoutHelper;
+    }
+
+    public AbsSubAdapter(LayoutHelper layoutHelper, RecyclerView.RecycledViewPool pool) {
+        this.mLayoutHelper = layoutHelper;
+        this.pool = pool;
     }
 
     public void setDelegateAdapter(DelegateAdapter delegateAdapter) {
@@ -59,9 +67,27 @@ public abstract class AbsSubAdapter<Data> extends RecyclerView.Adapter<BaseViewH
         return mLayoutHelper.getSpanForPosition(position, maxSpanCount);
     }
 
-    @Override
-    public final int getItemViewType(int position) {
-        return getItemViewTypeForSubAdapter(position);
+    HashMap<Integer, Integer> recycledViewTypeCache = new HashMap<>();
+
+    /**
+     * 设置viewtype的缓存
+     *
+     * @param viewType
+     * @param max
+     */
+    public void setMaxRecycledViews(int viewType, int max) {
+        if (index != -1) {
+            int index = getIndex();
+            //在总的adapter中的真实的viewType
+            long realViewType = Cantor.getCantor(viewType, index);
+            if (pool != null) {
+                pool.setMaxRecycledViews((int) realViewType, max);
+            }
+        } else {
+            //缓存起来，在setIndex的时候使用
+            recycledViewTypeCache.put(viewType, max);
+        }
+
     }
 
     public int getIndex() {
@@ -70,13 +96,14 @@ public abstract class AbsSubAdapter<Data> extends RecyclerView.Adapter<BaseViewH
 
     public void setIndex(int index) {
         this.index = index;
-    }
-
-    /**
-     * ITEM_SHARE_TYPE_SUBADAPTER模式下重写该方法，为每个item指定viewtype
-     */
-    protected int getItemViewTypeForSubAdapter(int position) {
-        return 0;
+        for (Integer viewType : recycledViewTypeCache.keySet()) {
+            //在总的adapter中的真实的viewType
+            long realViewType = Cantor.getCantor(viewType, index);
+            if (pool != null) {
+                pool.setMaxRecycledViews((int) realViewType, recycledViewTypeCache.get(viewType));
+            }
+        }
+        recycledViewTypeCache.clear();
     }
 
     public List<Data> getData() {
