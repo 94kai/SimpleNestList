@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private List<CategoryBean> categoryBeans;
     private DelegateAdapter delegateAdapter;
     private BrandAdapter brandAdapter;
+    RecyclerView.Adapter finalAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,9 +47,46 @@ public class MainActivity extends AppCompatActivity {
                 help();
             }
         });
+//        final RecyclerView.Adapter adapter;
+//
+//        adapter = new RecyclerView.Adapter() {
+//            @NonNull
+//            @Override
+//            public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+//                Button textView = new Button(viewGroup.getContext());
+//                textView.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        recyclerView.setAdapter(null);
+//                        recyclerView.setAdapter(finalAdapter);
+//                    }
+//                });
+//                Log.i("MainActivity", "onCreateViewHolder-->");
+//                return new RecyclerView.ViewHolder(textView) {
+//                    @Override
+//                    public String toString() {
+//                        return super.toString();
+//                    }
+//                };
+//            }
+//
+//            @Override
+//            public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
+//                Log.i("MainActivity", "onBindViewHolder-->");
+//            }
+//
+//            @Override
+//            public int getItemCount() {
+//                return 100;
+//            }
+//        };
+//        finalAdapter = adapter;
+//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        recyclerView.setAdapter(adapter);
+
 
         SimpleNestLayoutManager layoutManager = new SimpleNestLayoutManager(this);
-        delegateAdapter = new DelegateAdapter(layoutManager, new ShareAllTypeProvider());
+        delegateAdapter = new DelegateAdapter(layoutManager);
         recyclerView.setLayoutManager(layoutManager);
         RecyclerView.RecycledViewPool recycledViewPool = new RecyclerView.RecycledViewPool();
         recycledViewPool.setMaxRecycledViews(0, 15);
@@ -58,30 +96,31 @@ public class MainActivity extends AppCompatActivity {
         categoryBeans = createDatas(CategoryBean.class);
 
 
-        BrandAdapter service = new BrandAdapter(new TitleGridLayoutHelper(3), ShareAllTypeProvider.ADAPTER_ID_TITLE_GRID);
+        BrandAdapter service = new BrandAdapter(new TitleGridLayoutHelper(3));
         service.setData(brandBeans);
 
-        categoryAdapter = new CategoryAdapter(new GridLayoutHelper(4), ShareAllTypeProvider.ADAPTER_ID_GRID);
+        categoryAdapter = new CategoryAdapter(new GridLayoutHelper(4));
         categoryAdapter.setData(categoryBeans);
 
 
-        BrandAdapter serviceList = new BrandAdapter(new LinearLayoutHelper(), ShareAllTypeProvider.ADAPTER_ID_LIST);
+        BrandAdapter serviceList = new BrandAdapter(new LinearLayoutHelper());
         serviceList.setData(brandBeans);
 
-        BrandAdapter serviceList2 = new BrandAdapter(new TitleGridLayoutHelper(2), ShareAllTypeProvider.ADAPTER_ID_TITLE_GRID);
+        BrandAdapter serviceList2 = new BrandAdapter(new TitleGridLayoutHelper(2));
         serviceList2.setData(brandBeans);
 
         absSubAdapters.add(service);
-        absSubAdapters.add(new SingleAdapter(new SingleLayoutHelper(), ShareAllTypeProvider.ADAPTER_ID_SINGLE_DIVIDER));
+        absSubAdapters.add(new SingleAdapter(new SingleLayoutHelper()));
         absSubAdapters.add(categoryAdapter);
         absSubAdapters.add(serviceList);
         absSubAdapters.add(serviceList2);
-        absSubAdapters.add(new SingleAdapter(new SingleLayoutHelper(), ShareAllTypeProvider.ADAPTER_ID_SINGLE_DIVIDER));
+        absSubAdapters.add(new SingleAdapter(new SingleLayoutHelper()));
 
-        brandAdapter = new BrandAdapter(new CrossGridLayoutHelper(), ShareAllTypeProvider.ADAPTER_ID_GRID);
+        brandAdapter = new BrandAdapter(new CrossGridLayoutHelper());
         brandAdapter.setData(createDatas(BrandBean.class, 25));
         absSubAdapters.add(brandAdapter);
         delegateAdapter.setAdapters(absSubAdapters);
+        delegateAdapter.setPool(recycledViewPool);
         recyclerView.setAdapter(delegateAdapter);
     }
 
@@ -110,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private <T> List<T> createDatas(Class<T> clazz) {
-        return createDatas(clazz, 12);
+        return createDatas(clazz, 100);
     }
 
     public void help() {
@@ -136,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
 //        categoryAdapter.simpleNotifyDataSetChanged(oldDatas, categoryBeans);
         //2.2.3使用自定义的DiffCallback，会根据数据源的变化情况来刷，效率略高
 //        categoryAdapter.simpleNotifyDataSetChanged(oldDatas, categoryBeans,new DefaultDiffCallback<CategoryBean>(){
-            // TODO: by xk 2019/4/25 下午3:56 实现各种自己的实现
+        // TODO: by xk 2019/4/25 下午3:56 实现各种自己的实现
 //        });
         //2.3itemChanged
 //        categoryAdapter.simpleNotifyItemChanged(1);

@@ -1,6 +1,8 @@
 package com.xk.simplenestrecyclerview;
 
 import android.support.annotation.NonNull;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -16,8 +18,17 @@ import com.xk.simplenestrecyclerview.bean.BrandBean;
  */
 public class BrandAdapter extends AbsSubAdapter<BrandBean> {
 
-    public BrandAdapter(LayoutHelper layoutHelper, int adapterId) {
-        super(layoutHelper, adapterId);
+    public BrandAdapter(LayoutHelper layoutHelper) {
+        super(layoutHelper);
+    }
+
+    @NonNull
+    @Override
+    public BaseViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        View itemView;
+        itemView = new Button(viewGroup.getContext());
+        itemView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        return new BaseViewHolder(itemView);
     }
 
     @Override

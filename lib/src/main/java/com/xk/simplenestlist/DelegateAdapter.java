@@ -3,7 +3,7 @@ package com.xk.simplenestlist;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.SparseArray;
+import android.util.Log;
 import android.view.ViewGroup;
 
 import com.xk.simplenestlist.adapter.AbsSubAdapter;
@@ -11,29 +11,14 @@ import com.xk.simplenestlist.adapter.AbsSubAdapter;
 import java.util.LinkedList;
 
 /**
- * 1.subadapter之间的item的type不共享
- * 2.只要孩子的itemtype相同，就共享
+ * subadapter之间的item的type不共享
  *
  * @author xuekai1
  * @date 2019/4/24
  */
 public class DelegateAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
-    /**
-     * 只要孩子的itemtype相同，就可复用。
-     * 注意：这种情况要保证，不同的subAdapter，如果viewType相同，那么onCreateViewHolder要一致
-     * 共享的时候需要注意，onbindviewholder最好所有的adapter都一致，并且type定义不要有重复，即type相同，布局一定一致。
-     */
-    public static final int ITEM_SHARE_TYPE_ALL = 0;
-    /**
-     * 仅在subAdapter内部的item之间复用
-     */
-    public static final int ITEM_SHARE_TYPE_SUBADAPTER = 1;
     private final SimpleNestLayoutManager mLayoutManager;
-    /**
-     * item复用方式
-     */
-    public int itemShareType = ITEM_SHARE_TYPE_ALL;
 
     /**
      * subadapter的集合
@@ -41,46 +26,43 @@ public class DelegateAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     private LinkedList<AbsSubAdapter> mAdapters = new LinkedList<>();
 
     /**
-     * viewType和adapter的键值对集合，仅用于ITEM_SHARE_TYPE_ALL模式，因为该模式下，对于相同的viewType，
-     * 每个subAdapter的onCreateViewHolder的行为一致，所以可以通过viewType来决定如果CreateViewHolder
-     */
-    private SparseArray<AbsSubAdapter> mItemTypeAry = new SparseArray<>();
-    /**
      * itemCount
      */
     private int total;
-    private IShareAllTypeProvider shareAllTypeProvider;
+    private RecyclerView.RecycledViewPool pool;
 
 
     /**
      * 构造
+     * 共享type
      *
      * @param layoutManager
-     * @param itemViewTypeProvider
      */
-    public DelegateAdapter(SimpleNestLayoutManager layoutManager, IShareAllTypeProvider itemViewTypeProvider) {
+    public DelegateAdapter(SimpleNestLayoutManager layoutManager) {
         this.mLayoutManager = layoutManager;
-        this.shareAllTypeProvider = itemViewTypeProvider;
         layoutManager.setSpanSizeLookup(getSpanSizeLookUp());
-        if (itemShareType == ITEM_SHARE_TYPE_ALL) {
-            if (this.shareAllTypeProvider == null) {
-                throw new SimpleNestListException("ITEM_SHARE_TYPE_ALL模式必须指定itemViewTypeProvider");
-            }
-        }
     }
+
 
     @NonNull
     @Override
     public BaseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        if (itemShareType == ITEM_SHARE_TYPE_ALL) {
-            AbsSubAdapter absSubAdapter = mItemTypeAry.get(viewType);
-            if (absSubAdapter != null) {
-                return absSubAdapter.onCreateViewHolder(parent, viewType);
-            }
-        } else {
-            throw new SimpleNestListException("ITEM_SHARE_TYPE_SUBADAPTER暂未实现");
+        AbsSubAdapter absSubAdapter = resolveViewType(viewType);
+        if (absSubAdapter != null) {
+            Log.i("DelegateAdapter", "onCreateViewHolder-->" + viewType + " adapterIndex:" + absSubAdapter.getIndex());
+            return absSubAdapter.onCreateViewHolder(parent, viewType);
         }
         throw new SimpleNestListException();
+    }
+
+    /**
+     * 根据viewType解析出所属的SubAdapter
+     */
+    private AbsSubAdapter resolveViewType(int viewType) {
+        long[] result = new long[2];
+        Cantor.reverseCantor(viewType, result);
+        long index = result[1];
+        return mAdapters.get((int) index);
     }
 
     @Override
@@ -103,14 +85,16 @@ public class DelegateAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         if (absSubAdapter == null) {
             throw new SimpleNestListException();
         }
-        if (itemShareType == ITEM_SHARE_TYPE_ALL) {
-            int subItemType = absSubAdapter.getItemViewType(position - absSubAdapter.mStartPosition);
-            mItemTypeAry.put(subItemType, absSubAdapter);
-            //所有subAdapter之间item共享
-            return subItemType;
-        } else {
-            throw new SimpleNestListException("ITEM_SHARE_TYPE_SUBADAPTER暂未实现");
-        }
+        return makeViewType(absSubAdapter, position);
+        //通过absSubAdapter和position构造出一个viewType
+    }
+
+    private int makeViewType(AbsSubAdapter absSubAdapter, int position) {
+        int subItemType = absSubAdapter.getItemViewType(position - absSubAdapter.mStartPosition);
+        long cantor = Cantor.getCantor(subItemType, absSubAdapter.getIndex());
+        //test
+        pool.setMaxRecycledViews((int) cantor,40);
+        return (int) cantor;
     }
 
     /**
@@ -157,9 +141,9 @@ public class DelegateAdapter extends RecyclerView.Adapter<BaseViewHolder> {
      */
     private void clear() {
         total = 0;
+        // TODO: by xk 2019/4/24 上午10:36 任意一个adapter的itemCount改变，都需要更新total
+        // TODO: by xk 2019-05-31 14:59 如何可以类似于调用RecyclerView.setAdapter 方法，全部重置，防止出现type和上次的type一样的情况。情况复用池应该可以
     }
-
-    // TODO: by xk 2019/4/24 上午10:36 任意一个adapter的itemCount改变，都需要更新total
 
     /**
      * 任意一个subAdapter的数据源改变，都可以通过调用该方法来刷新。类似于notifyDataSetChanged
@@ -170,13 +154,16 @@ public class DelegateAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         // TODO: by xk 2019/4/24 上午10:39 更新position和subadapter的索引
     }
 
-    public void updateIndex(){
+    public void updateIndex() {
         clear();
         int startPosition = 0;
+        int index = 0;
         for (AbsSubAdapter mAdapter : mAdapters) {
             mAdapter.setDelegateAdapter(this);
             mAdapter.mStartPosition = startPosition;
             startPosition += mAdapter.getItemCount();
+            mAdapter.setIndex(index);
+            index++;
         }
         for (AbsSubAdapter adapter : mAdapters) {
             total += adapter.getItemCount();
@@ -237,8 +224,8 @@ public class DelegateAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         }
     }
 
-    public IShareAllTypeProvider getShareAllTypeProvider() {
-        return shareAllTypeProvider;
+    public void setPool(RecyclerView.RecycledViewPool recycledViewPool) {
+        this.pool = recycledViewPool;
     }
 }
 
